@@ -6,15 +6,18 @@ buildscript {
 
 plugins {
     id 'java-library'
-    id 'org.openjfx.javafxplugin' version '0.0.13'
-    id 'org.unbroken-dome.test-sets' version '4.0.0'
+    id 'org.openjfx.javafxplugin' version '0.1.0'
+    id 'org.unbroken-dome.test-sets' version '4.1.0'
     id 'biz.aQute.bnd.builder' version "5.3.0"
     id 'maven-publish'
     id 'signing'
 }
 
+sourceCompatibility = 21
+targetCompatibility = 21
+
 javafx {
-    version = '11'
+    version = '21.0.2'
     modules = [ 'javafx.controls', 'javafx.fxml']
     def taskNames = gradle.getStartParameter().getTaskNames()
     // Prevent pom & module.json from containing JavaFX runtime dependencies
@@ -147,13 +150,11 @@ integrationTest {
 }
 
 task javadocJar(type: Jar, dependsOn: javadoc) {
-    classifier = 'javadoc'
     from 'build/docs/javadoc'
 }
 
 task sourcesJar(type: Jar) {
     from sourceSets.main.allSource
-    classifier = 'sources'
 }
 
 artifacts {
@@ -224,6 +225,7 @@ if(doUploadArchives) {
 }
 
 task fatJar(type: Jar, dependsOn: classes) {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     archiveAppendix = 'fat'
     manifest.attributes( 'Automatic-Module-Name': 'org.fxmisc.richtext' )
     from sourceSets.main.output
